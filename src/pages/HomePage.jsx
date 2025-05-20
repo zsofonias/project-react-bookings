@@ -1,38 +1,72 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import {
-  listings as staticListings,
-  isListingAvailable,
-} from '@/api/data/listings';
+import api from '@/api';
 
 import ListingList from '@/components/listing/ListingList';
-import { Separator } from '@/components/ui';
 import ListingFilters from '@/components/listing/ListingFilters';
+import { Separator, Spinner } from '@/components/ui';
+import axios from 'axios';
 
 const HomePage = () => {
-  const [listings, setListings] = useState(staticListings);
+  const [listings, setListings] = useState([]);
+  const [filters, setFilters] = useState({
+    dates: undefined,
+    guests: 0,
+    search: '',
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const abortController = useRef(null);
+
+  useEffect(() => {
+    const fetchListings = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      abortController.current = new AbortController();
+
+      try {
+        const response = await api.get('/api/listings', {
+          params: filters,
+          signal: abortController.current?.signal, // Add the signal to the Axios request
+        });
+        setListings(response.data);
+      } catch (err) {
+        if (axios.isCancel(err)) {
+          return;
+        }
+        setError('Something went wrong. Please try again later.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchListings();
+
+    return () => {
+      abortController.current?.abort();
+    };
+  }, [filters]);
 
   const handleFilters = (filters) => {
-    const { dates, guests, search } = filters;
+    setFilters(filters);
+  };
 
-    let filteredListings = staticListings;
-    if (dates) {
-      filteredListings = filteredListings.filter((listing) =>
-        isListingAvailable(listing, dates),
-      );
-    }
-    if (guests) {
-      filteredListings = filteredListings.filter(
-        (listing) => listing.maxGuests >= guests,
-      );
-    }
-    if (search) {
-      filteredListings = filteredListings.filter((listing) =>
-        listing.name.toLowerCase().includes(search.toLowerCase()),
+  const renderListingList = () => {
+    if (isLoading) {
+      return (
+        <div className='flex justify-center'>
+          <Spinner size='sm' />
+        </div>
       );
     }
 
-    setListings(filteredListings);
+    if (error) {
+      return <div className='text-center'>{error}</div>;
+    }
+
+    return <ListingList listings={listings} />;
   };
 
   return (
@@ -41,7 +75,7 @@ const HomePage = () => {
         <ListingFilters onChange={handleFilters} />
         <Separator className='my-4' />
       </div>
-      <ListingList listings={listings} />
+      {renderListingList()}
     </div>
   );
 };

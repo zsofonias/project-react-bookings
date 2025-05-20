@@ -1,4 +1,3 @@
-import { listings } from '@/api/data/listings';
 import ListingCard from './ListingCard';
 
 const ListingList = ({ listings }) => {
