@@ -1,4 +1,4 @@
-# Project React - Cosden Solutions
+# Project React Bookings
 
 Learn React by building a real-world project.
 
