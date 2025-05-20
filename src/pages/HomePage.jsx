@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 
 import api from '@/api';
@@ -5,7 +6,6 @@ import api from '@/api';
 import ListingList from '@/components/listing/ListingList';
 import ListingFilters from '@/components/listing/ListingFilters';
 import { Separator, Spinner } from '@/components/ui';
-import axios from 'axios';
 
 const HomePage = () => {
   const [listings, setListings] = useState([]);
