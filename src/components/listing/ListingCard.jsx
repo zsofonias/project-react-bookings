@@ -2,13 +2,20 @@ import { Link } from 'react-router-dom';
 import { DollarSign, Pin, Users } from 'lucide-react';
 
 import ListingCardImages from './ListingCardImages';
+import ListingFavoriteButton from './ListingFavoriteButton';
 import { Card, CardContent } from '@/components/ui';
 
 const ListingCard = ({ listing }) => {
   return (
     <Link to={`listings/${listing.id}`}>
       <Card className='w-[320px]'>
-        <ListingCardImages listing={listing} />
+        <div className='relative'>
+          <ListingCardImages listing={listing} />
+          <ListingFavoriteButton
+            listing={listing}
+            className='absolute right-4 top-4'
+          />
+        </div>
         <CardContent className='flex flex-col gap-2 p-4'>
           <h2 className='mb-2 text-xl font-semibold'>{listing.name}</h2>
           <div className='flex items-center gap-2'>
