@@ -13,7 +13,7 @@ const useFetch = (url, options) => {
 
   const abortControllerRef = useRef(null);
 
-  const storateKey = useMemo(() => {
+  const storageKey = useMemo(() => {
     if (!options?.params) {
       return url;
     }
@@ -23,7 +23,7 @@ const useFetch = (url, options) => {
   useEffect(() => {
     const fetchedData = async () => {
       const currentTime = new Date().getTime();
-      const cachedData = getItem(storateKey);
+      const cachedData = getItem(storageKey);
 
       if (cachedData && currentTime - cachedData.time < STALE_TIME) {
         setData(cachedData.data);
@@ -57,15 +57,15 @@ const useFetch = (url, options) => {
     return () => {
       abortControllerRef.current?.abort();
     };
-  }, [url, options]);
+  }, [url, options, storageKey]);
 
   useEffect(() => {
     if (!data) return;
-    setItem(storateKey, {
+    setItem(storageKey, {
       time: new Date().getTime(),
       data,
     });
-  }, [data, storateKey]);
+  }, [data, storageKey]);
 
   return { data, isLoading, error };
 };

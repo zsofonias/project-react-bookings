@@ -4,8 +4,8 @@ import useFetch from '@/hooks/useFetch';
 
 import ListingList from '@/components/listing/ListingList';
 import ListingFilters from '@/components/listing/ListingFilters';
-import { Separator, Spinner } from '@/components/ui';
 import DataRenderer from '@/components/DataRenderer';
+import { Separator } from '@/components/ui';
 
 const HomePage = () => {
   const [filters, setFilters] = useState({
